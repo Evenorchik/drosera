@@ -71,7 +71,7 @@ deploy_trap() {
     foundryup
     
     echo -e "${WHITE}[${RED}2/5${WHITE}] ${RED}➜ ${WHITE}📂 Creating directory...${NC}"
-    mkdir my-drosera-trap
+    mkdir -p my-drosera-trap
     cd my-drosera-trap
     
     echo -e "${WHITE}[${RED}3/5${WHITE}] ${RED}➜ ${WHITE}⚙️ Setting up Git...${NC}"
@@ -151,9 +151,9 @@ start_node() {
     read -p "➜ " PRIV_KEY
     
     export DROSERA_PRIVATE_KEY="$PRIV_KEY"
-    drosera-operator register --eth-rpc-url https://ethereum-holesky-rpc.publicnode.com --eth-private-key $DROSERA_PRIVATE_KEY
+    drosera-operator register --eth-rpc-url https://ethereum-holesky-rpc.publicnode.com --eth-private-key "$DROSERA_PRIVATE_KEY"
     
-    echo -e "${WHITE}[${RED}3/4${WHITE}] ${赤}➜ ${WHITE}⚙️ Creating service...${NC}"
+    echo -e "${WHITE}[${RED}3/4${WHITE}] ${RED}➜ ${WHITE}⚙️ Creating service...${NC}"
     SERVER_IP=$(curl -s https://api.ipify.org)
     
     sudo bash -c "cat <<EOF > /etc/systemd/system/drosera.service
@@ -226,14 +226,14 @@ print_menu() {
     
     echo -e "${BOLD}${RED}🔧 Available actions:${NC}\n"
     echo -e "${RED}[${RED}1${RED}] ${RED}➜ ${RED}📦 Install dependencies${NC}"
-    echo -e "${RED}[${RED}2${Red}] ${RED}➜ ${RED}🚀 Deploy Trap${NC}"
+    echo -e "${RED}[${RED}2${RED}] ${RED}➜ ${RED}🚀 Deploy Trap${NC}"
     echo -e "${RED}[${RED}3${RED}] ${RED}➜ ${RED}🛠️ Install node${NC}"
     echo -e "${RED}[${RED}4${RED}] ${RED}➜ ${RED}▶️ Start node${NC}"
     echo -e "${RED}[${RED}5${RED}] ${RED}➜ ${RED}🔄 Check status${NC}"
     echo -e "${RED}[${RED}6${RED}] ${RED}➜ ${RED}📋 View logs${NC}"
     echo -e "${RED}[${RED}7${RED}] ${RED}➜ ${RED}🔄 Restart node${NC}"
     echo -e "${RED}[${RED}8${RED}] ${RED}➜ ${RED}🗑️ Remove node${NC}"
-    echo -e "${RED}[${RED}9${RED}] ${RED}➜ ${Red}🚪 Exit${NC}\n"
+    echo -e "${RED}[${RED}9${RED}] ${RED}➜ ${RED}🚪 Exit${NC}\n"
 }
 
 # Main program loop
@@ -261,4 +261,27 @@ while true; do
             info_message "Checking node status..."
             echo -e "${RED}You have the latest Drosera node version!${NC}"
             ;;
-        6)\``]}]}
+        6)
+            info_message "Viewing node logs..."
+            journalctl -u drosera.service -f
+            ;;
+        7)
+            info_message "Restarting node..."
+            sudo systemctl restart drosera
+            journalctl -u drosera.service -f
+            ;;
+        8)
+            remove_node
+            ;;
+        9)
+            echo -e "\n${RED}👋 Goodbye!${NC}\n"
+            exit 0
+            ;;
+        *)
+            error_message "Invalid choice! Please enter a number from 1 to 9."
+            ;;
+    esac
+    
+    echo -e "\nPress Enter to return to the menu..."
+    read
+done
