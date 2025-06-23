@@ -13,6 +13,8 @@ sleep 1
 
 # Display logo
 curl -s https://raw.githubusercontent.com/Evenorchik/evenorlogo/refs/heads/main/evenorlogo.sh | bash
+echo -e "${ORANGE}Thank you for using my scripts, hope we all will get lifechange here :)${NC}"
+echo -e "${ORANGE}Ill be very appretiated if you follow my X https://x.com/Evenorchik${NC}"
 
 # Menu
 echo -e "${ORANGE}Select an action:${NC}"
